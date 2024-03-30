@@ -120,7 +120,7 @@ def minimax(board,depth,isMax):
                     # make move
                     board[i][j]=opponent
                     # call minimax recursively and choose min value
-                    best=min(best,minimax(board,depth+1),not isMax)
+                    best=min(best,minimax(board,depth+1,not isMax))
 
                     # undo move
                     board[i][j]="_"
@@ -138,13 +138,28 @@ def findBestMove(board):
                 # make move 
                 board[i][j]=player
                 # compute evaluation function for this move
-                moveVal
+                moveVal=minimax(board,0,False)
+
+                # undo move
+                board[i][j]="_"
+
+                # if value of current move is more than best value, then update best
+                if(moveVal>bestVal):
+                    bestMove=(i,j)
+                    bestVal=moveVal
+
+    print("The value of the best Move is :",bestVal)
+    print()
+    return bestMove
 
 if __name__ =="__main__":
-    board=[["X","_","O"],
-           ["_","X","O"],
-           ["_","_","X"]]
+    board=[["X","O","X"],
+           ["O","O","X"],
+           ["_","_","_"]
+    ]
     
-    value=evaluate(board)
-    print("The value of this board is",value)
+    bestMove=findBestMove(board)
+
+    print("The Optimal Move is :")
+    print("ROW:",bestMove[0]," COL:",bestMove[1])
 
