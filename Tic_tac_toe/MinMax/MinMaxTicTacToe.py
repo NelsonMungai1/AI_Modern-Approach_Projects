@@ -84,11 +84,11 @@ def minimax(board,depth,isMax):
     score=evaluate(board)
     # if maximier  wins game returns his/her evaluated score
     if(score==10):
-        return score
+        return score-depth
     
     # if minimizer has won game returns his/her evaluated score
     if(score==-10):
-        return score
+        return score+depth
     # /if there are no more moves tie
     if(isMoveLeft(board)==False):
         return 0
@@ -148,18 +148,82 @@ def findBestMove(board):
                     bestMove=(i,j)
                     bestVal=moveVal
 
-    print("The value of the best Move is :",bestVal)
-    print()
+    # print("The value of the best Move is :",bestVal)
+    # print()
+
     return bestMove
 
-if __name__ =="__main__":
-    board=[["X","O","X"],
-           ["O","O","X"],
-           ["_","_","_"]
-    ]
-    
-    bestMove=findBestMove(board)
+def print_board(board):
+    for row in board:
+        print(" ".join(row))
 
-    print("The Optimal Move is :")
-    print("ROW:",bestMove[0]," COL:",bestMove[1])
+def is_winner(board, player):
+    # Check rows, columns, and diagonals for a win
+    for i in range(3):
+        if all(cell == player for cell in board[i]):
+            return True
+        if all(board[j][i] == player for j in range(3)):
+            return True
+    if all(board[i][i] == player for i in range(3)):
+        return True
+    if all(board[i][2 - i] == player for i in range(3)):
+        return True
+    return False
+
+def is_full(board):
+    return all(cell != "_" for row in board for cell in row)
+
+def human_move(board):
+    while True:
+        try:
+            row = int(input("Enter the row (0, 1, or 2): "))
+            col = int(input("Enter the column (0, 1, or 2): "))
+            if board[row][col] == "_":
+                return row, col
+            else:
+                print("That position is already taken!")
+        except (ValueError, IndexError):
+            print("Invalid input. Please enter numbers between 0 and 2.")
+
+def play_game():
+    board = [["_"] * 3 for _ in range(3)]
+    print("Welcome to Tic-Tac-Toe!")
+    print_board(board)
+    while True:
+        # Human's turn
+        row, col = human_move(board)
+        board[row][col] = "X"
+        print_board(board)
+        if is_winner(board, "X"):
+            print("Congratulations! You win!")
+            break
+        if is_full(board):
+            print("It's a draw!")
+            break
+        # AI's turn
+        print("AI's turn:")
+        row, col = findBestMove(board)
+        board[row][col] = "O"
+        print_board(board)
+        if is_winner(board, "O"):
+            print("Sorry, you lose. AI wins!")
+            break
+        if is_full(board):
+            print("It's a draw!")
+            break
+
+if __name__ == "__main__":
+    play_game()
+
+
+# if __name__ =="__main__":
+#     board=[["X","O","X"],
+#            ["O","O","X"],
+#            ["_","_","_"]
+#     ]
+    
+#     bestMove=findBestMove(board)
+
+#     print("The Optimal Move is :")
+#     print("ROW:",bestMove[0]," COL:",bestMove[1])
 
