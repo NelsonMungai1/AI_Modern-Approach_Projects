@@ -192,23 +192,24 @@ def play_game():
     print("Welcome to Tic-Tac-Toe!")
     print_board(board)
     while True:
-        # Human's turn
-        row, col = human_move(board)
+        # Maximizer AI turn
+        print("Maximizer's turn (AI)")
+        row, col = findBestMove(board)
         board[row][col] = "X"
         print_board(board)
         if is_winner(board, "X"):
-            print("Congratulations! You win!")
+            print("Maximizer AI wins!")
             break
         if is_full(board):
             print("It's a draw!")
             break
         # AI's turn
-        print("AI's turn:")
+        print("Minimizer AI's turn:")
         row, col = findBestMove(board)
         board[row][col] = "O"
         print_board(board)
         if is_winner(board, "O"):
-            print("Sorry, you lose. AI wins!")
+            print("Minimizer AI wins!")
             break
         if is_full(board):
             print("It's a draw!")
