@@ -6,7 +6,9 @@ function findBestMove(board):
             bestMove=currentMove
     return bestMove
 
+
 '''
+#add more 
 '''
 function minimax(board,depth,isMaximizingPlayer):
     if current board state is a terminal state:
