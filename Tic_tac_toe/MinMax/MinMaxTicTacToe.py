@@ -129,31 +129,27 @@ def minimax(board,depth,isMax):
         return best
     
 # function to return best move for nplayer
-def findBestMove(board):
-    bestVal=-1000
-    bestMove=(-1,-1)
-    # traverse all the cells, evaluate minimax function for all empty cells and Retunr the cell with optimal value
+def findBestMove(board, maximizing_player):
+    bestVal = float('-inf') if maximizing_player else float('inf')
+    bestMove = (-1, -1)
     for i in range(3):
         for j in range(3):
-            # check if cell is empty
-            if(board[i][j]=="_"):
-                # make move 
-                board[i][j]=player
-                # compute evaluation function for this move
-                moveVal=minimax(board,0,False)
-
-                # undo move
-                board[i][j]="_"
-
-                # if value of current move is more than best value, then update best
-                if(moveVal>bestVal):
-                    bestMove=(i,j)
-                    bestVal=moveVal
-
-    # print("The value of the best Move is :",bestVal)
-    # print()
-
+            if board[i][j] == "_":
+                # Make a move
+                board[i][j] = player if maximizing_player else opponent
+                # Compute the evaluation function for this move
+                moveVal = minimax(board, 0, not maximizing_player)
+                # Undo the move
+                board[i][j] = "_"
+                # Update the best move and value based on the player type
+                if maximizing_player and moveVal > bestVal:
+                    bestMove = (i, j)
+                    bestVal = moveVal
+                elif not maximizing_player and moveVal < bestVal:
+                    bestMove = (i, j)
+                    bestVal = moveVal
     return bestMove
+
 
 def print_board(board):
     for row in board:
@@ -191,29 +187,25 @@ def play_game():
     board = [["_"] * 3 for _ in range(3)]
     print("Welcome to Tic-Tac-Toe!")
     print_board(board)
+    is_maximizer_turn = True
     while True:
-        # Maximizer AI turn
-        print("Maximizer's turn (AI)")
-        row, col = findBestMove(board)
-        board[row][col] = "X"
+        if is_maximizer_turn:
+            print("Maximizer's turn (AI):")
+            row, col = findBestMove(board, True)  # True indicates maximizing player
+            symbol = "X"  # Symbol for the maximizing player
+        else:
+            print("Minimizer's turn (AI):")
+            row, col = findBestMove(board, False)  # False indicates minimizing player
+            symbol = "O"  # Symbol for the minimizing player
+        board[row][col] = symbol
         print_board(board)
-        if is_winner(board, "X"):
-            print("Maximizer AI wins!")
+        if is_winner(board, symbol):
+            print(f"{symbol} wins!")
             break
         if is_full(board):
             print("It's a draw!")
             break
-        # AI's turn
-        print("Minimizer AI's turn:")
-        row, col = findBestMove(board)
-        board[row][col] = "O"
-        print_board(board)
-        if is_winner(board, "O"):
-            print("Minimizer AI wins!")
-            break
-        if is_full(board):
-            print("It's a draw!")
-            break
+        is_maximizer_turn = not is_maximizer_turn  # Toggle the turn between maximizer and minimizer
 
 if __name__ == "__main__":
     play_game()

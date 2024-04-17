@@ -29,3 +29,29 @@ def play_game():
         if is_full(board):
             print("It's a draw!")
             break
+
+def findBestMove(board):
+    bestVal=-1000
+    bestMove=(-1,-1)
+    # traverse all the cells, evaluate minimax function for all empty cells and Retunr the cell with optimal value
+    for i in range(3):
+        for j in range(3):
+            # check if cell is empty
+            if(board[i][j]=="_"):
+                # make move 
+                board[i][j]=player
+                # compute evaluation function for this move
+                moveVal=minimax(board,0,False)
+
+                # undo move
+                board[i][j]="_"
+
+                # if value of current move is more than best value, then update best
+                if(moveVal>bestVal):
+                    bestMove=(i,j)
+                    bestVal=moveVal
+
+    # print("The value of the best Move is :",bestVal)
+    # print()
+
+    return bestMove
