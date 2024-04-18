@@ -92,13 +92,13 @@ def minimax(board,depth,isMax,alpha,beta):
                     # make move
                     board[i][j]=player
                     # call minimax recursively and chooe max value
-                    value=minimax(board,depth+1,not isMax,alpha,beta)
-                    best=max(best,value)
-                    alpha=max(best,alpha)
-                    if beta<=alpha:
+                    best = max(best, minimax(board, depth + 1, not isMax, alpha, beta))
+                    alpha = max(alpha, best)
+                    board[i][j]="_"
+                    if beta <= alpha:
                         break
                     # undo move
-                    board[i][j]="_"
+                    
         return best
     # for the minimizer
     else:
@@ -111,17 +111,17 @@ def minimax(board,depth,isMax,alpha,beta):
                     # make move
                     board[i][j]=opponent
                     # call minimax recursively and choose min value
-                    value=minimax(board,depth+1,not isMax,alpha,beta)
-                    best=min(best,value)
-                    beta=min(beta,best)
-                    if beta<=alpha:
+                    best = min(best, minimax(board, depth + 1, not isMax, alpha, beta))
+                    beta = min(beta, best)
+                    board[i][j]="_"
+                    if beta <= alpha:
                         break
                     # undo move
-                    board[i][j]="_"
+                    
         return best
     
 # function to return best move for nplayer
-def findBestMove(board, maximizing_player):
+def findBestMove(board, maximizing_player, alpha, beta):
     bestVal = float('-inf') if maximizing_player else float('inf')
     bestMove = (-1, -1)
     for i in range(3):
@@ -130,18 +130,25 @@ def findBestMove(board, maximizing_player):
                 # Make a move
                 board[i][j] = player if maximizing_player else opponent
                 # Compute the evaluation function for this move
-                moveVal = minimax(board, 0, not maximizing_player)
+                moveVal = minimax(board, 0, not maximizing_player, alpha, beta)
                 # Undo the move
                 board[i][j] = "_"
                 # Update the best move and value based on the player type
-                if maximizing_player and moveVal > bestVal:
-                    bestMove = (i, j)
-                    bestVal = moveVal
-                elif not maximizing_player and moveVal < bestVal:
-                    bestMove = (i, j)
-                    bestVal = moveVal
+                if maximizing_player:
+                    if moveVal > bestVal:
+                        bestMove = (i, j)
+                        bestVal = moveVal
+                    alpha = max(alpha, bestVal)  # Update alpha based on bestVal
+                    if beta <= alpha:
+                        break
+                else:
+                    if moveVal < bestVal:
+                        bestMove = (i, j)
+                        bestVal = moveVal
+                    beta = min(beta, bestVal)  # Update beta based on bestVal
+                    if beta <= alpha:
+                        break
     return bestMove
-
 
 def print_board(board):
     for row in board:
@@ -180,14 +187,16 @@ def play_game():
     print("Welcome to Tic-Tac-Toe!")
     print_board(board)
     is_maximizer_turn = True
+    alpha=float('-inf')
+    beta=float("inf")
     while True:
         if is_maximizer_turn:
             print("Maximizer's turn (AI):")
-            row, col = findBestMove(board, True)  # True indicates maximizing player
+            row, col = findBestMove(board, True,alpha,beta)  # True indicates maximizing player
             symbol = "X"  # Symbol for the maximizing player
         else:
             print("Minimizer's turn (AI):")
-            row, col = findBestMove(board, False)  # False indicates minimizing player
+            row, col = findBestMove(board, False,alpha,beta)  # False indicates minimizing player
             symbol = "O"  # Symbol for the minimizing player
         board[row][col] = symbol
         print_board(board)
